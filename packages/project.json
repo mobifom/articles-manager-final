@@ -1,0 +1,16 @@
+{
+    "targets": {
+      "test:all": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx run frontend:test:unit",
+            "nx run frontend:test:integration",
+            "nx run frontend:test:acceptance",
+            "nx run backend:test:api"
+          ],
+          "parallel": false
+        }
+      }
+    }
+  }

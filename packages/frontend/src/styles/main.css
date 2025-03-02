@@ -1,8 +1,14 @@
 /* packages/frontend/src/styles/main.css */
 @import "open-props/style";
+
+/* critical:start */
 @import "tailwindcss/base";
+/* critical:end */
+
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+
 
 :root {
   /* Map our New Zealand inspired colors */
@@ -198,3 +204,8 @@
     @apply text-gray-100;
   }
 }
+@font-face {
+    font-family: 'YourFont';
+    src: url('/fonts/your-font.woff2') format('woff2');
+    font-display: swap;
+  }

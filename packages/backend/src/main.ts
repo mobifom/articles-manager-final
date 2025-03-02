@@ -39,6 +39,16 @@ if (process.env['NODE_ENV'] === 'production') {
   });
 }
 
+// Add a dummy endpoint for demonstration
+app.get('/api/status', (req: Request, res: Response) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: process.env['NODE_ENV'] || 'development'
+  });
+});
+
 // Start server
 app.listen(port, host, () => {
   console.log(`Server running at http://${host}:${port}`);

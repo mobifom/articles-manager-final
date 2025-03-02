@@ -11,9 +11,11 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "types": ["node", "@wdio/globals/types", "@types/jquery"],
     "outDir": "../../dist/packages/frontend"
   },
   "files": [],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }
+

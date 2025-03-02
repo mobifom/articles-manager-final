@@ -23,6 +23,43 @@
         "command": "pnpm dev",
         "cwd": "packages/frontend"
       }
+    },
+    "test:unit": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/frontend/jest.config.ts",
+        "passWithNoTests": true,
+        "testMatch": ["**/src/**/*.test.{ts,tsx}"]
+      }
+    },
+    "test:integration": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/frontend/jest.config.ts",
+        "passWithNoTests": true,
+        "testMatch": ["**/src/tests/integration/**/*.test.{ts,tsx}"]
+      }
+    },
+    "test:ui": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "wdio run wdio.conf.js",
+        "cwd": "packages/frontend"
+      },
+      "dependsOn": [
+        {
+          "target": "serve",
+          "projects": "self"
+        }
+      ]
+    },
+    "test:acceptance": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/frontend/jest.config.ts",
+        "passWithNoTests": true,
+        "testMatch": ["**/src/tests/acceptance/**/*.test.{ts,tsx}"]
+      }
     }
   }
 }

@@ -35,6 +35,19 @@
             }
           }
         }
+      },
+      "test:api": {
+        "executor": "@nrwl/workspace:run-commands",
+        "options": {
+          "command": "jasmine --config=spec/support/jasmine.json",
+          "cwd": "packages/backend"
+        },
+        "dependsOn": [
+          {
+            "target": "serve",
+            "projects": "self"
+          }
+        ]
       }
     },
     "serve": {
