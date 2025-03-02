@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "axios": "^1.8.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-replace": "^6.0.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "10.4.13",
+    "cpy-cli": "^5.0.0",
+    "critical": "^7.2.1",
+    "postcss": "8.4.38",
+    "rollup": "^4.34.9",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "tailwindcss": "3.4.3",
+    "vite": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "rollup -c && cpy public/* dist && npm run critical",
+    "critical": "critical dist/index.html --base dist --inline --minify > dist/index.critical.html && mv dist/index.critical.html dist/index.html",
+    "build:dev": "vite build",
+    "preview": "vite preview"
+  }
+}

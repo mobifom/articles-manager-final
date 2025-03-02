@@ -1,0 +1,47 @@
+<!-- packages/frontend/src/layouts/MainLayout.astro -->
+---
+// Import any necessary components or data
+import '../styles/main.css';
+
+// Define props
+const { title = 'Articles-Manager' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A modern application for managing articles" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <header class="bg-primary-600 shadow-md text-white">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between py-4">
+          <div class="flex items-center">
+            <a href="/" class="text-xl font-bold">Articles-Manager</a>
+          </div>
+          <nav>
+            <ul class="flex space-x-6">
+              <li><a href="/" class="hover:text-primary-200 transition-colors">Home</a></li>
+              <li><a href="/articles" class="hover:text-primary-200 transition-colors">Articles</a></li>
+              <li><a href="/articles/new" class="hover:text-primary-200 transition-colors">Create Article</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="bg-primary-800 text-white py-8">
+      <div class="container mx-auto px-4 text-center">
+        <p>© {new Date().getFullYear()} Articles-Manager. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

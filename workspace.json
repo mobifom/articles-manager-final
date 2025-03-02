@@ -1,0 +1,3 @@
+"serve": {
+  "executor": "nx:run-commands"
+}

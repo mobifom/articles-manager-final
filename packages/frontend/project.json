@@ -1,0 +1,28 @@
+// packages/frontend/project.json
+{
+  "name": "frontend",
+  "projectType": "application",
+  "sourceRoot": "packages/frontend/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "pnpm build",
+        "cwd": "packages/frontend"
+      },
+      "configurations": {
+        "development": {
+          "command": "pnpm build:dev",
+          "cwd": "packages/frontend"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "pnpm dev",
+        "cwd": "packages/frontend"
+      }
+    }
+  }
+}

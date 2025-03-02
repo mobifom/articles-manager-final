@@ -1,0 +1,27 @@
+---
+import { ArticleService } from '../services/api.service';
+import MainLayout from '../layouts/MainLayout.astro';
+
+// Fetch articles during build/render
+const articles = await ArticleService.getArticles(1, 5).catch(() => []);
+---
+
+<MainLayout title="Home">
+  <div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-4">Latest Articles</h1>
+    
+    {articles.length > 0 ? (
+      <div class="grid gap-4">
+        {articles.map((article) => (
+          <div class="border p-4 rounded">
+            <h2 class="text-xl font-semibold">{article.title}</h2>
+            <p>{article.excerpt || article.content.substring(0, 150)}...</p>
+            <a href={`/articles/${article.id}`} class="text-blue-500">Read More</a>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No articles found.</p>
+    )}
+  </div>
+</MainLayout>

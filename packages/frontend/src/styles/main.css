@@ -1,0 +1,200 @@
+/* packages/frontend/src/styles/main.css */
+@import "open-props/style";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  /* Map our New Zealand inspired colors */
+  --primary-50: #e6f3f8;
+  --primary-100: #ccebf2;
+  --primary-200: #99d7e5;
+  --primary-300: #66c3d7;
+  --primary-400: #33afca;
+  --primary-500: #009bbd;
+  --primary-600: #007c97;
+  --primary-700: #005d71;
+  --primary-800: #003e4c;
+  --primary-900: #001f26;
+  
+  --secondary-50: #e6f5ec;
+  --secondary-100: #ccebd9;
+  --secondary-200: #99d7b3;
+  --secondary-300: #66c38d;
+  --secondary-400: #33af66;
+  --secondary-500: #009b40;
+  --secondary-600: #007c33;
+  --secondary-700: #005d26;
+  --secondary-800: #003e1a;
+  --secondary-900: #001f0d;
+  
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  
+  /* Spacing */
+  --size-1: var(--size-1);
+  --size-2: var(--size-2);
+  --size-3: var(--size-3);
+  --size-4: var(--size-4);
+  --size-6: var(--size-6);
+  --size-8: var(--size-8);
+  
+  /* Border radius */
+  --radius-1: var(--radius-1);
+  --radius-2: var(--radius-2);
+  --radius-3: var(--radius-3);
+  --radius-4: var(--radius-4);
+  --radius-5: var(--radius-5);
+  
+  /* Animations */
+  --animation-fade-in: var(--animation-fade-in);
+  --animation-slide-in: var(--animation-slide-in);
+}
+
+/* Custom component classes using Tailwind's @apply directive */
+@layer components {
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center rounded px-4 py-2 font-medium transition-colors duration-200 ease-in-out;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 text-white hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1 text-sm;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+  
+  /* Card styles */
+  .card {
+    @apply overflow-hidden rounded-lg bg-white shadow transition-shadow duration-300;
+  }
+  
+  .card:hover {
+    @apply shadow-md;
+  }
+  
+  .card-header {
+    @apply border-b border-gray-200 px-6 py-4;
+  }
+  
+  .card-body {
+    @apply px-6 py-4;
+  }
+  
+  .card-footer {
+    @apply border-t border-gray-200 bg-gray-50 px-6 py-3;
+  }
+  
+  /* Form styles */
+  .form-group {
+    @apply mb-4;
+  }
+  
+  .form-label {
+    @apply mb-1 block text-sm font-medium text-gray-700;
+  }
+  
+  .form-input {
+    @apply block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .form-textarea {
+    @apply block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:text-sm;
+  }
+  
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-blue-800 text-blue-100;
+  }
+  
+  .badge-secondary {
+    @apply bg-green-800 text-green-100;
+  }
+  
+  /* Article content styles */
+  .article-content {
+    @apply prose prose-lg max-w-none;
+  }
+  
+  /* Page container */
+  .page-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Page header */
+  .page-header {
+    @apply mb-8;
+  }
+  
+  .page-title {
+    @apply text-3xl font-bold text-gray-900 sm:text-4xl;
+  }
+  
+  /* Page section */
+  .page-section {
+    @apply mb-12;
+  }
+  
+  .section-title {
+    @apply mb-6 text-2xl font-bold text-gray-900;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card {
+    @apply bg-gray-800 text-white;
+  }
+  
+  .card-header {
+    @apply border-gray-700;
+  }
+  
+  .card-footer {
+    @apply border-gray-700 bg-gray-900;
+  }
+  
+  .badge-primary {
+    @apply bg-blue-900 text-blue-100;
+  }
+  
+  .badge-secondary {
+    @apply bg-green-900 text-green-100;
+  }
+  
+  .form-label {
+    @apply text-gray-300;
+  }
+  
+  .form-input, .form-textarea {
+    @apply border-gray-700 bg-gray-800 text-white;
+  }
+  
+  .btn-outline {
+    @apply border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700;
+  }
+  
+  .page-title, .section-title {
+    @apply text-gray-100;
+  }
+}

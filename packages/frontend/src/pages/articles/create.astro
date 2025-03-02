@@ -1,0 +1,35 @@
+---
+// src/pages/articles/[id].astro
+import { getArticleById } from '../../services/articleService';
+import MainLayout from '../../layouts/MainLayout.astro';
+
+export async function getStaticPaths() {
+  // In a real app, fetch all article IDs
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    // More article IDs
+  ];
+}
+
+const { id } = Astro.params;
+const article = await getArticleById(id);
+---
+
+<MainLayout title={article.title}>
+  <article>
+    <h1>{article.title}</h1>
+    <p>By {article.author}</p>
+    <p>{article.content}</p>
+    <div class="actions">
+      <a href={`/articles/edit/${id}`} class="btn">Edit</a>
+      <button class="btn delete">Delete</button>
+    </div>
+  </article>
+</MainLayout>
+
+<script>
+  document.querySelector('.delete')?.addEventListener('click', async () => {
+    // Implement delete logic
+  });
+</script>
