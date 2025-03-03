@@ -1,5 +1,6 @@
 // packages/backend/src/tests/api/articles.spec.ts
 import { Api } from '../../generated/api-client/ApiClient';
+import axios from 'axios';
 
 describe('Articles API', () => {
   let apiClient: Api<unknown>;
@@ -86,10 +87,14 @@ describe('Articles API', () => {
       
       // Verify the article was deleted
       try {
-        await apiClient.api.articlesDetail(createdArticleId);
+        await axios.get(`http://localhost:3333/api/articles/${createdArticleId}`);
         fail('Expected article to be deleted but it was still found');
       } catch (error: any) {
-        expect(error.response?.status).toBe(404);
+        if (axios.isAxiosError(error)) {
+          expect(error.response?.status).toBe(404);
+        } else {
+          fail('Expected an Axios error');
+        }
       }
     } catch (error) {
       console.error('Error in test:', error);
@@ -99,11 +104,15 @@ describe('Articles API', () => {
   
   it('should handle requests for non-existent articles', async () => {
     try {
-      await apiClient.api.articlesDetail('non-existent-id');
+      await axios.get('http://localhost:3333/api/articles/non-existent-id');
       fail('Expected 404 error for non-existent article');
     } catch (error: any) {
-      expect(error.response?.status).toBe(404);
-      expect(error.response?.data.message).toBe('Article not found');
+      if (axios.isAxiosError(error)) {
+        expect(error.response?.status).toBe(404);
+        expect(error.response?.data.message).toBe('Article not found');
+      } else {
+        fail('Expected an Axios error');
+      }
     }
   });
 });
