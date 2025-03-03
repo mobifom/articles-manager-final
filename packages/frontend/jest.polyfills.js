@@ -1,11 +1,27 @@
 // packages/frontend/jest.polyfills.js
 // Polyfills for Jest environment
-require('whatwg-fetch');
-
-// TextEncoder/TextDecoder polyfills
 const { TextEncoder, TextDecoder } = require('util');
+
+// Import web streams polyfill
+const { 
+  ReadableStream, 
+  WritableStream,
+  TransformStream 
+} = require('web-streams-polyfill/ponyfill');
+
+// Import node-fetch for Response, Request, Headers globals
+const nodeFetch = require('node-fetch');
+
+// Assign all required globals
+global.ReadableStream = ReadableStream;
+global.WritableStream = WritableStream;
+global.TransformStream = TransformStream;
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+global.Response = nodeFetch.Response;
+global.Request = nodeFetch.Request;
+global.Headers = nodeFetch.Headers;
+global.fetch = nodeFetch;
 
 // Polyfill BroadcastChannel
 class BroadcastChannelPolyfill {

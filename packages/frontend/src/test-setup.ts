@@ -1,5 +1,22 @@
 // packages/frontend/src/test-setup.ts
 import '@testing-library/jest-dom';
+
+// Import the streams polyfill first before any other imports
+import { ReadableStream, TransformStream, WritableStream } from 'web-streams-polyfill/ponyfill';
+import { TextEncoder, TextDecoder } from 'util';
+import { Response, Request, Headers } from 'node-fetch';
+
+// Assign all necessary globals
+global.ReadableStream = ReadableStream;
+global.TransformStream = TransformStream;
+global.WritableStream = WritableStream;
+global.Response = Response;
+global.Request = Request;
+global.Headers = Headers;
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Now import the MSW server
 import { server } from './tests/mocks/server';
 import { resetMockArticles } from './tests/mocks/handlers';
 
@@ -44,13 +61,6 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn()
 }));
-
-// Polyfill TextEncoder/TextDecoder if needed
-if (typeof global.TextEncoder === 'undefined' || typeof global.TextDecoder === 'undefined') {
-  const { TextEncoder, TextDecoder } = require('util');
-  global.TextEncoder = TextEncoder;
-  global.TextDecoder = TextDecoder;
-}
 
 // Set up fetch polyfill for Node environment
 if (typeof global.fetch === 'undefined') {

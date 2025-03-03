@@ -23,6 +23,7 @@ describe('ArticleCard Component', () => {
   // Reset mocks before each test
   beforeEach(() => {
     jest.clearAllMocks();
+    
     // Mock window.confirm
     window.confirm = jest.fn(() => true);
   });

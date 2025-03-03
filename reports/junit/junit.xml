@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="0" failures="0" errors="0" time="1.535">
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="2.245">
+  <testsuite name="ArticlePreview Web Component" errors="0" failures="0" skipped="0" timestamp="2025-03-03T07:36:23" time="1.801" tests="3">
+    <testcase classname="ArticlePreview Web Component should be defined as a custom element" name="ArticlePreview Web Component should be defined as a custom element" time="0.036">
+    </testcase>
+    <testcase classname="ArticlePreview Web Component should render with default values when no attributes are set" name="ArticlePreview Web Component should render with default values when no attributes are set" time="0.006">
+    </testcase>
+    <testcase classname="ArticlePreview Web Component should reflect attribute changes" name="ArticlePreview Web Component should reflect attribute changes" time="0.007">
+    </testcase>
+  </testsuite>
 </testsuites>

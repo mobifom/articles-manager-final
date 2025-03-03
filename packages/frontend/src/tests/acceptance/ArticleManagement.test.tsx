@@ -5,28 +5,56 @@ import { render } from '../utils/test-utils';
 import ArticleFormPage from '../../pages/ArticleFormPage';
 import ArticleListPage from '../../pages/ArticleListPage';
 import ArticleDetailPage from '../../pages/ArticleDetailPage';
-import { setupApiServiceMock, mockApiService } from '../mocks/apiServiceMock';
 
-// Setup the API mock for acceptance tests
-setupApiServiceMock();
+// Load the feature file
+const feature = loadFeature('./src/tests/acceptance/features/article-management.feature', {
+  loadRelativePath: true
+});
 
-// Mock navigate for React Router
+// Mock the API service
+jest.mock('../../services/api.service', () => {
+  const mockArticles = [];
+  
+  return {
+    apiService: {
+      getArticles: jest.fn().mockImplementation(() => Promise.resolve(mockArticles)),
+      getArticleById: jest.fn().mockImplementation((id) => {
+        const article = mockArticles.find(a => a.id === id);
+        if (!article) return Promise.reject(new Error('Article not found'));
+        return Promise.resolve(article);
+      }),
+      createArticle: jest.fn().mockImplementation((articleData) => {
+        const newArticle = {
+          id: 'test-id',
+          ...articleData,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        mockArticles.push(newArticle);
+        return Promise.resolve(newArticle);
+      }),
+      updateArticle: jest.fn(),
+      deleteArticle: jest.fn()
+    }
+  };
+});
+
+// Mock useNavigate
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-// Load the feature file - adjust the path based on your project structure
-const feature = loadFeature('./src/tests/acceptance/features/article-management.feature', {
-  loadRelativePath: true
-});
-
 defineFeature(feature, (test) => {
   // Reset mocks before each test
   beforeEach(() => {
-    mockApiService.resetArticles();
     jest.clearAllMocks();
+    
+    // Reset the mock articles
+    jest.requireMock('../../services/api.service').apiService.getArticles.mockImplementation(() => 
+      Promise.resolve([])
+    );
   });
 
   test('Creating and viewing an article', ({ given, when, then, and }) => {
@@ -78,75 +106,54 @@ defineFeature(feature, (test) => {
       fireEvent.click(screen.getByText(/create article/i));
       
       await waitFor(() => {
-        expect(mockApiService.createArticle).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith('/articles');
       });
     });
     
     then('I should be redirected to the articles list page', () => {
-      // Check that navigate was called with the correct path
-      expect(mockNavigate).toHaveBeenCalledWith('/articles');
-      
       // Clean up previous render
-      if (renderResult) {
-        renderResult.unmount();
-        renderResult = null;
-      }
+      if (renderResult) renderResult.unmount();
+      
+      // Update mock implementation to include the new article
+      const apiService = jest.requireMock('../../services/api.service').apiService;
+      apiService.getArticles.mockImplementation(() => 
+        Promise.resolve([{
+          id: 'test-id',
+          title: 'My First Article',
+          author: 'BDD Tester',
+          content: 'This is a test article...',
+          tags: ['bdd', 'test', 'acceptance'],
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }])
+      );
       
       // Render the list page
       renderResult = render(<ArticleListPage />, { route: '/articles' });
     });
     
     and('I should see the article "My First Article" in the list', async () => {
-      // Create a test article directly in the mock API to simulate successful creation
-      mockApiService.articles.push({
-        id: 'test-id',
-        title: 'My First Article',
-        author: 'BDD Tester',
-        content: 'This is a test article...',
-        tags: ['bdd', 'test', 'acceptance'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
-      
-      // Force a re-render by unmounting and mounting again
-      if (renderResult) {
-        renderResult.unmount();
-        renderResult = null;
-      }
-      
-      renderResult = render(<ArticleListPage />, { route: '/articles' });
-      
       await waitFor(() => {
         expect(screen.getByText('My First Article')).toBeInTheDocument();
       });
     });
     
     when('I click on the article "My First Article"', async () => {
-      // In our test environment, clicking will trigger a navigate call rather than actually navigating
-      // So we'll simulate clicking on the article
-      // Find all elements containing the text and click the first visible one (could be title or a button)
-      const articleElements = screen.getAllByText('My First Article');
-      fireEvent.click(articleElements[0]);
+      // Find the article title and click it
+      fireEvent.click(screen.getByText('My First Article'));
       
-      // Wait for any async operations
-      await waitFor(() => {});
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/articles/test-id');
+      });
     });
     
     then('I should see the article details page', async () => {
       // Clean up previous render
-      if (renderResult) {
-        renderResult.unmount();
-        renderResult = null;
-      }
+      if (renderResult) renderResult.unmount();
       
-      // Render the detail page with the article id
-      renderResult = render(
-        <ArticleDetailPage />,
-        { route: '/articles/test-id' }
-      );
-      
-      // Setup mock to return our test article
-      mockApiService.getArticleById.mockImplementation(() => 
+      // Update mock to return article details
+      const apiService = jest.requireMock('../../services/api.service').apiService;
+      apiService.getArticleById.mockImplementation(() => 
         Promise.resolve({
           id: 'test-id',
           title: 'My First Article',
@@ -158,22 +165,20 @@ defineFeature(feature, (test) => {
         })
       );
       
-      await waitFor(() => {
-        expect(mockApiService.getArticleById).toHaveBeenCalled();
-      });
+      // Render the detail page
+      renderResult = render(
+        <ArticleDetailPage />,
+        { route: '/articles/test-id' }
+      );
     });
     
     and('The article should display the correct information', async () => {
-      // Verify the article content is shown
+      // Wait for article to load
       await waitFor(() => {
         expect(screen.getByText('My First Article')).toBeInTheDocument();
         expect(screen.getByText(/BDD Tester/)).toBeInTheDocument();
         expect(screen.getByText(/This is a test article/)).toBeInTheDocument();
       });
-      
-      // Tags might be rendered with different elements, so we check for their presence
-      const pageContent = screen.getByText(/This is a test article/).textContent;
-      expect(pageContent).toBeTruthy();
     });
   });
 });

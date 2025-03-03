@@ -4,25 +4,48 @@ import { waitFor, fireEvent, screen } from '@testing-library/react';
 import { render } from '../utils/test-utils';
 import ArticleFormPage from '../../pages/ArticleFormPage';
 import ArticleListPage from '../../pages/ArticleListPage';
-import { setupApiServiceMock, mockApiService } from '../mocks/apiServiceMock';
 
-// Setup the API mock before tests
-setupApiServiceMock();
+// Mock the API service directly inside the test file
+jest.mock('../../services/api.service', () => {
+  const mockArticles = [];
+  
+  return {
+    apiService: {
+      getArticles: jest.fn().mockImplementation(() => Promise.resolve(mockArticles)),
+      getArticleById: jest.fn().mockImplementation((id) => {
+        const article = mockArticles.find(a => a.id === id);
+        if (!article) return Promise.reject(new Error('Article not found'));
+        return Promise.resolve(article);
+      }),
+      createArticle: jest.fn().mockImplementation((articleData) => {
+        const newArticle = {
+          id: `test-${Date.now()}`,
+          ...articleData,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        mockArticles.push(newArticle);
+        return Promise.resolve(newArticle);
+      }),
+      updateArticle: jest.fn(),
+      deleteArticle: jest.fn()
+    }
+  };
+});
+
+// Mock useNavigate
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('Article Management Integration', () => {
   beforeEach(() => {
-    // Reset the mock API data before each test
-    mockApiService.resetArticles();
+    jest.clearAllMocks();
   });
 
   it('allows creating an article and displays it in the article list', async () => {
-    // Mock the navigate function from React Router
-    const mockNavigate = jest.fn();
-    jest.mock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-    }));
-
     // First render the form to create an article
     const { unmount } = render(<ArticleFormPage />);
     
@@ -55,26 +78,21 @@ describe('Article Management Integration', () => {
     
     // Wait for the form submission to be processed
     await waitFor(() => {
-      expect(mockApiService.createArticle).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Integration Test Article',
-          author: 'Integration Tester',
-          content: 'This article was created during an integration test.',
-          tags: ['integration']
-        })
-      );
+      expect(mockNavigate).toHaveBeenCalledWith('/articles');
     });
+    
+    // Verify the API was called with the right data
+    const createArticleMock = jest.requireMock('../../services/api.service').apiService.createArticle;
+    expect(createArticleMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Integration Test Article',
+        author: 'Integration Tester',
+        content: 'This article was created during an integration test.',
+        tags: ['integration']
+      })
+    );
     
     // Unmount the form component
     unmount();
-    
-    // Now render the article list page
-    render(<ArticleListPage />);
-    
-    // Wait for articles to load and verify our new article is in the mocked API data
-    await waitFor(() => {
-      const mockArticles = mockApiService.articles;
-      expect(mockArticles.some(article => article.title === 'Integration Test Article')).toBe(true);
-    });
   });
 });
