@@ -1,11 +1,9 @@
 {
   "name": "backend",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/backend/src",
   "projectType": "application",
   "tags": [],
   "targets": {
-   "lint": {
+    "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
@@ -21,58 +19,11 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "platform": "node",
-        "outputPath": "dist/packages/backend",
-        "format": ["cjs"],
-        "bundle": false,
+        "outputPath": "dist/apps/backend",
         "main": "packages/backend/src/main.ts",
         "tsConfig": "packages/backend/tsconfig.app.json",
-        "assets": ["packages/backend/src/assets"],
-        "generatePackageJson": true,
-        "esbuildOptions": {
-          "sourcemap": true,
-          "outExtension": {
-            ".js": ".js"
-          }
-        }
-      },
-      "configurations": {
-        "development": {},
-        "production": {
-          "esbuildOptions": {
-            "sourcemap": false,
-            "outExtension": {
-              ".js": ".js"
-            }
-          }
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "dependsOn": ["build"],
-      "options": {
-        "buildTarget": "backend:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "backend:build:development"
-        },
-        "production": {
-          "buildTarget": "backend:build:production"
-        }
-      }
-    },
-    "test:api": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "packages/backend/jest.config.ts",
-        "passWithNoTests": true,
-        "testMatch": ["**/src/tests/api/**/*.spec.ts"]
+        "assets": ["packages/backend/src/assets"]
       }
     }
   }
