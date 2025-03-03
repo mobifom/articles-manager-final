@@ -52,7 +52,10 @@
     "build": "rollup -c && node scripts/extract-critical.js",
     "build:dev": "vite build",
     "preview": "vite preview",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test:backend": "nx run backend:test:api",
+    "test:frontend": "nx run frontend:test:unit",
+    "test:integration": "nx run frontend:test:integration",
+    "test:acceptance": "nx run frontend:test:acceptance",
+    "test:all": "nx run test:all"
   }
 }

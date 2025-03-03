@@ -1,4 +1,5 @@
-const path = require('path');
+// packages/frontend/jest.config.ts
+import { resolve } from 'path';
 
 module.exports = {
   testEnvironment: 'jsdom',
@@ -13,8 +14,8 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^(\\.{1,2}/.*)\\.js$': '$1',
-    '^msw$': path.resolve(__dirname, 'node_modules/msw/lib/index.mjs'),
-    '^msw/(.*)$': path.resolve(__dirname, 'node_modules/msw/lib/$1.mjs')
+    '^msw$': resolve(__dirname, 'node_modules/msw/lib/index.mjs'),
+    '^msw/(.*)$': resolve(__dirname, 'node_modules/msw/lib/$1.mjs')
   },
   setupFiles: [
     '<rootDir>/jest.polyfills.js'
@@ -23,9 +24,8 @@ module.exports = {
     '<rootDir>/src/test-setup.ts'
   ],
   testEnvironmentOptions: {
-    httpSignals: true,
-    fetchExternalResources: true,
-    resources: 'usable'
+    customExportConditions: ['browser', 'node', 'default'],
+    url: 'http://localhost/'
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@testing-library|msw)/)'
@@ -34,7 +34,8 @@ module.exports = {
     'ts-jest': {
       diagnostics: {
         warnOnly: true
-      }
+      },
+      useESM: true
     }
   },
   resolver: '<rootDir>/jest-msw-resolver.js'

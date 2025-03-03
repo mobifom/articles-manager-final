@@ -1,12 +1,27 @@
+// packages/frontend/src/test-setup.ts
 import '@testing-library/jest-dom';
 import { server } from './tests/mocks/server';
 
-// Establish API mocking before all tests
-beforeAll(() => server.start());
+// Register web components to ensure they're available for tests
+import './components/web-components';
 
-// Reset any request handlers that we may add during the tests,
-// so they don't affect other tests
+// Setup MSW server before all tests
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+
+// Reset handlers after each test
 afterEach(() => server.resetHandlers());
 
-// Clean up after the tests are finished
-afterAll(() => server.stop());
+// Clean up after all tests
+afterAll(() => server.close());
+
+// Mock fetch if not available in test environment
+if (typeof global.fetch === 'undefined') {
+  global.fetch = jest.fn();
+}
+
+// Polyfill TextEncoder/TextDecoder if needed
+if (typeof global.TextEncoder === 'undefined' || typeof global.TextDecoder === 'undefined') {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}

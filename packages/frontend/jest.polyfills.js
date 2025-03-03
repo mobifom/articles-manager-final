@@ -1,8 +1,9 @@
+// packages/frontend/jest.polyfills.js
 // Polyfills for Jest environment
-const { TextEncoder, TextDecoder } = require('web-encoding');
 require('whatwg-fetch');
 
-// Provide TextEncoder and TextDecoder globally
+// TextEncoder/TextDecoder polyfills
+const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
@@ -36,9 +37,53 @@ class BroadcastChannelPolyfill {
 
 global.BroadcastChannel = BroadcastChannelPolyfill;
 
-// Ensure global fetch and Response are available
-if (typeof globalThis.fetch === 'undefined') {
-  const { fetch, Response } = require('node-fetch');
-  globalThis.fetch = fetch;
-  globalThis.Response = Response;
+// Web crypto API polyfill
+if (!global.crypto) {
+  global.crypto = {
+    getRandomValues: (buffer) => {
+      for (let i = 0; i < buffer.length; i++) {
+        buffer[i] = Math.floor(Math.random() * 256);
+      }
+      return buffer;
+    }
+  };
+}
+
+// Ensure global URL and URLSearchParams are available
+if (typeof global.URL === 'undefined') {
+  global.URL = require('url').URL;
+}
+
+if (typeof global.URLSearchParams === 'undefined') {
+  global.URLSearchParams = require('url').URLSearchParams;
+}
+
+// Polyfill for Event constructor
+if (typeof global.Event === 'undefined') {
+  global.Event = class Event {
+    constructor(type, options = {}) {
+      this.type = type;
+      this.bubbles = !!options.bubbles;
+      this.cancelable = !!options.cancelable;
+    }
+  };
+}
+
+// Mock localStorage and sessionStorage
+if (!global.localStorage) {
+  global.localStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  };
+}
+
+if (!global.sessionStorage) {
+  global.sessionStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  };
 }

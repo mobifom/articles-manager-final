@@ -2,12 +2,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { apiService } from '../services/api.service';
 import ArticleCard from './ArticleCard';
+import { Article } from '../types/article';
 
 const ArticlesList: React.FC = () => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     async function fetchArticles() {
@@ -27,7 +28,7 @@ const ArticlesList: React.FC = () => {
     fetchArticles();
   }, []);
 
-  const handleDeleteArticle = useCallback(async (id) => {
+  const handleDeleteArticle = useCallback(async (id: string) => {
     try {
       await apiService.deleteArticle(id);
       setArticles(prevArticles => prevArticles.filter(article => article.id !== id));
@@ -38,7 +39,7 @@ const ArticlesList: React.FC = () => {
   }, []);
 
   // Filter articles based on search term
-  const filteredArticles = articles.filter((article) => {
+  const filteredArticles = articles.filter((article: Article) => {
     if (!searchTerm.trim()) return true;
     
     const searchLower = searchTerm.toLowerCase();

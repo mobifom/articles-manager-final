@@ -1,18 +1,19 @@
-import { ApiClient } from '../../generated/api-client';
+// packages/backend/src/tests/api/articles.spec.ts
+import { Api } from '../../generated/api-client/ApiClient';
 
 describe('Articles API', () => {
-  let apiClient: ApiClient;
+  let apiClient: Api<unknown>;
   let createdArticleId: string;
   
   beforeAll(() => {
     // Initialize the API client with the server URL
-    apiClient = new ApiClient({
-      baseURL: 'http://localhost:3333',
+    apiClient = new Api<unknown>({
+      baseUrl: 'http://localhost:3333',
     });
   });
   
   it('should return an empty list of articles initially', async () => {
-    const response = await apiClient.articles.getArticles();
+    const response = await apiClient.api.articlesList();
     expect(response.status).toBe(200);
     expect(Array.isArray(response.data)).toBe(true);
   });
@@ -25,7 +26,7 @@ describe('Articles API', () => {
       tags: ['api', 'test']
     };
     
-    const response = await apiClient.articles.createArticle(newArticle);
+    const response = await apiClient.api.articlesCreate(newArticle);
     expect(response.status).toBe(201);
     expect(response.data.title).toBe(newArticle.title);
     expect(response.data.content).toBe(newArticle.content);
@@ -37,7 +38,7 @@ describe('Articles API', () => {
   });
   
   it('should retrieve a specific article by ID', async () => {
-    const response = await apiClient.articles.getArticleById(createdArticleId);
+    const response = await apiClient.api.articlesDetail(createdArticleId);
     expect(response.status).toBe(200);
     expect(response.data.id).toBe(createdArticleId);
     expect(response.data.title).toBe('API Test Article');
@@ -49,7 +50,7 @@ describe('Articles API', () => {
       content: 'This article was updated during an API test.'
     };
     
-    const response = await apiClient.articles.updateArticle(createdArticleId, updateData);
+    const response = await apiClient.api.articlesUpdate(createdArticleId, updateData);
     expect(response.status).toBe(200);
     expect(response.data.id).toBe(createdArticleId);
     expect(response.data.title).toBe(updateData.title);
@@ -59,12 +60,12 @@ describe('Articles API', () => {
   });
   
   it('should delete an article', async () => {
-    const response = await apiClient.articles.deleteArticle(createdArticleId);
+    const response = await apiClient.api.articlesDelete(createdArticleId);
     expect(response.status).toBe(204);
     
     // Verify the article was deleted
     try {
-      await apiClient.articles.getArticleById(createdArticleId);
+      await apiClient.api.articlesDetail(createdArticleId);
       // If we get here, the test should fail
       fail('Expected article to be deleted but it was still found');
     } catch (error) {
@@ -74,7 +75,7 @@ describe('Articles API', () => {
   
   it('should handle requests for non-existent articles', async () => {
     try {
-      await apiClient.articles.getArticleById('non-existent-id');
+      await apiClient.api.articlesDetail('non-existent-id');
       // If we get here, the test should fail
       fail('Expected 404 error for non-existent article');
     } catch (error) {
