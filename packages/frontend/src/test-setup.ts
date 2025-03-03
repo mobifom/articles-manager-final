@@ -1,68 +1,78 @@
-// packages/frontend/src/test-setup.ts
+// Essential testing libraries and polyfills
 import '@testing-library/jest-dom';
+import 'whatwg-fetch';
 
-// Import the streams polyfill first before any other imports
+// Streams and encoding polyfills
 import { ReadableStream, TransformStream, WritableStream } from 'web-streams-polyfill/ponyfill';
 import { TextEncoder, TextDecoder } from 'util';
-import { Response, Request, Headers } from 'node-fetch';
 
-// Assign all necessary globals
+// MSW setup
+import { server } from './tests/mocks/server';
+
+// Global polyfills and mocks
 global.ReadableStream = ReadableStream;
 global.TransformStream = TransformStream;
 global.WritableStream = WritableStream;
-global.Response = Response;
-global.Request = Request;
-global.Headers = Headers;
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// Now import the MSW server
-import { server } from './tests/mocks/server';
-import { resetMockArticles } from './tests/mocks/handlers';
+// BroadcastChannel Polyfill
+class BroadcastChannelPolyfill {
+  constructor(name) {
+    this.name = name;
+    this.listeners = [];
+  }
 
-// Register web components to ensure they're available for tests
-import './components/web-components';
+  postMessage(message) {
+    this.listeners.forEach(listener => listener({ data: message }));
+  }
 
-// Setup MSW server before all tests
-beforeAll(() => {
-  // Start the MSW server before all tests
-  server.listen({ onUnhandledRequest: 'warn' });
-  
-  // Mock window.confirm for tests
-  window.confirm = jest.fn(() => true);
+  addEventListener(event, callback) {
+    if (event === 'message') {
+      this.listeners.push(callback);
+    }
+  }
 
-  // Silence console errors during tests
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+  removeEventListener(event, callback) {
+    if (event === 'message') {
+      this.listeners = this.listeners.filter(listener => listener !== callback);
+    }
+  }
 
-// Reset handlers and mock data after each test
-afterEach(() => {
-  // Reset any request handlers added during specific tests
-  server.resetHandlers();
-  
-  // Reset mock articles data between tests
-  resetMockArticles();
-  
-  // Clear all mocks
-  jest.clearAllMocks();
-});
+  close() {
+    this.listeners = [];
+  }
+}
 
-// Clean up after all tests
-afterAll(() => {
-  // Stop the MSW server after all tests
-  server.close();
-  
-  // Restore console.error
-  jest.restoreAllMocks();
-});
+global.BroadcastChannel = BroadcastChannelPolyfill;
 
-// Mock React Router's useNavigate
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn()
-}));
-
-// Set up fetch polyfill for Node environment
+// Mock fetch and other globals
 if (typeof global.fetch === 'undefined') {
   global.fetch = jest.fn();
 }
+
+// Silence specific console errors
+const originalConsoleError = console.error;
+console.error = (msg, ...args) => {
+  if (
+    !msg?.includes('Warning: An update inside a test was not wrapped in act') &&
+    !msg?.includes('inside a test was not wrapped in act')
+  ) {
+    originalConsoleError(msg, ...args);
+  }
+};
+
+// Setup MSW server before all tests
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'warn' });
+});
+
+// Reset handlers after each test
+afterEach(() => {
+  server.resetHandlers();
+});
+
+// Close server after all tests
+afterAll(() => {
+  server.close();
+});
