@@ -1,12 +1,23 @@
-const nx = require('@nx/eslint-plugin');
 const baseConfig = require('../../eslint.config.js');
 
 module.exports = [
   ...baseConfig,
-  ...nx.configs['flat/react'],
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    // Override or add rules here
-    rules: {},
-  },
+    files: ['**/*.tsx', '**/*.jsx'],
+    rules: {
+      // Additional React-specific rules
+      'react/jsx-key': 'error',
+      'react/no-array-index-key': 'warn',
+      'react/jsx-props-no-spreading': ['warn', {
+        html: 'ignore',
+        exceptions: ['input', 'textarea']
+      }],
+      'react/self-closing-comp': ['error', {
+        component: true,
+        html: true
+      }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn'
+    }
+  }
 ];

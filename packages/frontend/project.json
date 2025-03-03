@@ -3,6 +3,22 @@
   "projectType": "application",
   "sourceRoot": "packages/frontend/src",
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/frontend/src/**/*.{ts,tsx,js,jsx}"
+        ],
+        "eslintConfig": [
+          "eslint.config.js",
+          "packages/frontend/eslint.config.js"
+        ],
+        "fix": false,
+        "cache": true,
+        "maxWarnings": 0
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {

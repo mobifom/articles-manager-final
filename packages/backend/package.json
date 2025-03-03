@@ -23,5 +23,46 @@
   },
   "scripts": {
     "generate-api": "node scripts/generate-swagger.js"
+  },
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/backend/src/**/*.{ts,js}"
+        ],
+        "fix": false,
+        "cache": true
+      }
+    },
+    "lint:fix": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/backend/src/**/*.{ts,js}"
+        ],
+        "fix": true,
+        "cache": true
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/backend",
+        "main": "packages/backend/src/main.ts"
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "backend:build"
+      }
+    }
   }
 }

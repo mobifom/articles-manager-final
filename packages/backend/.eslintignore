@@ -1,0 +1,8 @@
+# Backend-specific ignores
+dist/
+build/
+coverage/
+
+# Generated API files
+src/generated/
+*.spec.ts

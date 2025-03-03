@@ -1,0 +1,21 @@
+# Build outputs
+dist/
+build/
+coverage/
+
+# Dependency directories
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Nx workspace
+.nx/
+
+# Temporary and log files
+*.log
+.DS_Store
+
+# Generated files
+packages/*/src/generated/

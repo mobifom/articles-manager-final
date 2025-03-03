@@ -1,0 +1,12 @@
+# Frontend-specific ignores
+dist/
+build/
+coverage/
+
+# Test files
+*.test.tsx
+*.spec.tsx
+
+# Web component and generated files
+src/generated/
+**/web-components/*.d.ts
