@@ -1,21 +1,21 @@
 // packages/frontend/jest.config.ts
 import { resolve } from 'path';
 
-module.exports = {
+export default {
+  displayName: 'frontend',
+  preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: true,
-      tsconfig: '<rootDir>/tsconfig.jest.json'
+      tsconfig: '<rootDir>/tsconfig.spec.json'
     }]
   },
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^(\\.{1,2}/.*)\\.js$': '$1',
-    '^msw$': resolve(__dirname, 'node_modules/msw/lib/index.mjs'),
-    '^msw/(.*)$': resolve(__dirname, 'node_modules/msw/lib/$1.mjs')
+    '^msw$': resolve(__dirname, '../../node_modules/msw/lib/index.mjs'),
+    '^msw/(.*)$': resolve(__dirname, '../../node_modules/msw/lib/$1.mjs')
   },
   setupFiles: [
     '<rootDir>/jest.polyfills.js'
@@ -35,7 +35,7 @@ module.exports = {
       diagnostics: {
         warnOnly: true
       },
-      useESM: true
+      tsconfig: '<rootDir>/tsconfig.spec.json'
     }
   },
   resolver: '<rootDir>/jest-msw-resolver.js'

@@ -8,13 +8,16 @@ import * as path from 'path';
 import articlesRouter from './app/routes/articles.routes';
 import { setupSwagger } from './app/config/swagger';
 
+// Use environment variables with defaults
 const host = process.env['HOST'] ?? 'localhost';
 const port = process.env['PORT'] ? Number(process.env['PORT']) : 3333;
 
 const app = express();
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for development to allow Swagger UI to work properly
+}));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,16 +33,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Hello API' });
 });
 
-// Serve static frontend in production
-if (process.env['NODE_ENV'] === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend')));
-  
-  app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
-  });
-}
-
-// Add a dummy endpoint for demonstration
+// Status endpoint
 app.get('/api/status', (req: Request, res: Response) => {
   res.json({
     status: 'OK',
@@ -49,9 +43,27 @@ app.get('/api/status', (req: Request, res: Response) => {
   });
 });
 
+// Serve static frontend in production
+if (process.env['NODE_ENV'] === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend')));
+  
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  });
+}
+
 // Start server
-app.listen(port, host, () => {
+const server = app.listen(port, host, () => {
   console.log(`Server running at http://${host}:${port}`);
+  console.log(`Swagger docs available at http://${host}:${port}/api-docs`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
 });
 
 export default app;

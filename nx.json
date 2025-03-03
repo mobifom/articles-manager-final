@@ -29,7 +29,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["packages/backend-e2e/**/*"]
+      "exclude": ["packages/backend-e2e/**/*", "packages/frontend/**/*"]
     }
   ],
   "generators": {
@@ -54,6 +54,35 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
+    },
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
+    },
+    "e2e": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "lint": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore"
+      ]
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "test", "e2e", "lint"]
+      }
     }
   }
 }

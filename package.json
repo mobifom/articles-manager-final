@@ -2,7 +2,18 @@
   "name": "@articles-manager/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:backend": "nx serve backend",
+    "start:frontend": "nx serve frontend",
+    "build:backend": "nx build backend",
+    "build:frontend": "nx build frontend",
+    "test:backend": "nx run backend:test:api",
+    "test:frontend": "nx run frontend:test:unit",
+    "test:integration": "nx run frontend:test:integration",
+    "test:acceptance": "nx run frontend:test:acceptance",
+    "test:e2e": "nx run backend-e2e:e2e",
+    "test:all": "nx run test:all"
+  },
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -90,17 +101,5 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
-  },
-  "test:all": {
-    "executor": "nx:run-commands",
-    "options": {
-      "commands": [
-        "nx run frontend:test:unit",
-        "nx run frontend:test:integration",
-        "nx run frontend:test:acceptance",
-        "nx run backend:test:api"
-      ],
-      "parallel": false
-    }
   }
 }

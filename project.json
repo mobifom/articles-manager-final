@@ -1,0 +1,43 @@
+{
+    "name": "articles-manager",
+    "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+    "projects": {
+      "backend": "packages/backend",
+      "backend-e2e": "packages/backend-e2e",
+      "frontend": "packages/frontend"
+    },
+    "targets": {
+      "test:all": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx run frontend:test:unit",
+            "nx run frontend:test:integration",
+            "nx run frontend:test:acceptance",
+            "nx run backend:test:api"
+          ],
+          "parallel": false
+        }
+      },
+      "start:all": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx serve backend",
+            "nx serve frontend"
+          ],
+          "parallel": true
+        }
+      },
+      "build:all": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx build backend",
+            "nx build frontend"
+          ],
+          "parallel": true
+        }
+      }
+    }
+  }

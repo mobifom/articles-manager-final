@@ -1,12 +1,14 @@
-const nxPreset = require('@nrwl/jest/preset').default;
+const nxPreset = require('@nx/jest/preset').default;
 
 module.exports = {
   ...nxPreset,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest'
+    '^.+\\.(ts|js|html)$': ['ts-jest', {
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+    }]
   },
-  resolver: '@nrwl/jest/plugins/resolver',
+  resolver: '@nx/jest/plugins/resolver',
   moduleFileExtensions: ['ts', 'js', 'html'],
   collectCoverage: true,
   coverageReporters: ['html']
