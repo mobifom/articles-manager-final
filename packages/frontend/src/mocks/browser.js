@@ -1,4 +1,6 @@
-import { setupWorker } from 'msw'
-import { handlers } from './handlers'
+// packages/frontend/src/mocks/browser.ts
+import { setupWorker } from 'msw/browser';
+import { handlers } from './handlers';
 
-export const worker = setupWorker(...handlers)
+// This configures a Service Worker with the given request handlers
+export const worker = setupWorker(...handlers);

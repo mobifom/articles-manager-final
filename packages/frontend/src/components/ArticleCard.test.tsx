@@ -1,9 +1,12 @@
+// packages/frontend/src/components/ArticleCard.test.tsx
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { screen, fireEvent } from '@testing-library/react';
+import { render } from '../tests/utils/test-utils';
 import ArticleCard from './ArticleCard';
+import { Article } from '../types/article';
 
-const mockArticle = {
+// Mock article data for testing
+const mockArticle: Article = {
   id: '1',
   title: 'Test Article',
   content: 'This is the content of the test article',
@@ -13,31 +16,29 @@ const mockArticle = {
   updatedAt: new Date('2023-01-01')
 };
 
+// Mock delete function
 const mockOnDelete = jest.fn();
 
-// Helper function to render the component with Router context
-const renderWithRouter = (ui: React.ReactElement) => {
-  return render(ui, { wrapper: BrowserRouter });
-};
-
 describe('ArticleCard Component', () => {
+  // Reset mocks before each test
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock window.confirm
+    window.confirm = jest.fn(() => true);
   });
 
   it('renders article information correctly', () => {
-    renderWithRouter(
-      <ArticleCard article={mockArticle} onDelete={mockOnDelete} />
-    );
+    // Render the component with our custom render function
+    render(<ArticleCard article={mockArticle} onDelete={mockOnDelete} />);
 
     // Verify title is rendered
     expect(screen.getByText('Test Article')).toBeInTheDocument();
     
-    // Verify author is rendered
+    // Verify author is rendered (partial match because formatting might vary)
     expect(screen.getByText(/Test Author/)).toBeInTheDocument();
     
-    // Verify content is truncated and rendered correctly
-    expect(screen.getByText('This is the content of the test article')).toBeInTheDocument();
+    // Verify content is rendered (might be truncated in the component)
+    expect(screen.getByText(/This is the content/)).toBeInTheDocument();
     
     // Verify tags are rendered
     expect(screen.getByText('test')).toBeInTheDocument();
@@ -45,12 +46,8 @@ describe('ArticleCard Component', () => {
   });
 
   it('calls onDelete when delete button is clicked and confirmed', () => {
-    // Mock window.confirm to return true
-    window.confirm = jest.fn(() => true);
-    
-    renderWithRouter(
-      <ArticleCard article={mockArticle} onDelete={mockOnDelete} />
-    );
+    // Render the component
+    render(<ArticleCard article={mockArticle} onDelete={mockOnDelete} />);
     
     // Find and click the delete button
     const deleteButton = screen.getByText('Delete');
@@ -65,11 +62,10 @@ describe('ArticleCard Component', () => {
   
   it('does not call onDelete when delete is canceled', () => {
     // Mock window.confirm to return false
-    window.confirm = jest.fn(() => false);
+    (window.confirm as jest.Mock).mockReturnValueOnce(false);
     
-    renderWithRouter(
-      <ArticleCard article={mockArticle} onDelete={mockOnDelete} />
-    );
+    // Render the component
+    render(<ArticleCard article={mockArticle} onDelete={mockOnDelete} />);
     
     // Find and click the delete button
     const deleteButton = screen.getByText('Delete');

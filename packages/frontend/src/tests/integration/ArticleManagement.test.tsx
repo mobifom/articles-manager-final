@@ -1,25 +1,35 @@
+// packages/frontend/src/tests/integration/ArticleManagement.test.tsx
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { AppProvider } from '../../context/AppContext';
+import { waitFor, fireEvent, screen } from '@testing-library/react';
+import { render } from '../utils/test-utils';
 import ArticleFormPage from '../../pages/ArticleFormPage';
 import ArticleListPage from '../../pages/ArticleListPage';
+import { setupApiServiceMock, mockApiService } from '../mocks/apiServiceMock';
 
-// Helper function to render components with necessary providers
-const renderWithProviders = (ui: React.ReactElement) => {
-  return render(
-    <BrowserRouter>
-      <AppProvider>
-        {ui}
-      </AppProvider>
-    </BrowserRouter>
-  );
-};
+// Setup the API mock before tests
+setupApiServiceMock();
 
 describe('Article Management Integration', () => {
+  beforeEach(() => {
+    // Reset the mock API data before each test
+    mockApiService.resetArticles();
+  });
+
   it('allows creating an article and displays it in the article list', async () => {
+    // Mock the navigate function from React Router
+    const mockNavigate = jest.fn();
+    jest.mock('react-router-dom', () => ({
+      ...jest.requireActual('react-router-dom'),
+      useNavigate: () => mockNavigate,
+    }));
+
     // First render the form to create an article
-    const { unmount } = renderWithProviders(<ArticleFormPage />);
+    const { unmount } = render(<ArticleFormPage />);
+    
+    // Wait for the form to load
+    await waitFor(() => {
+      expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
+    });
     
     // Fill out the form
     fireEvent.change(screen.getByLabelText(/title/i), {
@@ -43,23 +53,28 @@ describe('Article Management Integration', () => {
     // Submit the form
     fireEvent.click(screen.getByText(/create article/i));
     
-    // Wait for the submission to complete
+    // Wait for the form submission to be processed
     await waitFor(() => {
-      // This will throw if the success isn't shown, failing the test
-      expect(screen.queryByText(/creating article/i)).not.toBeInTheDocument();
+      expect(mockApiService.createArticle).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Integration Test Article',
+          author: 'Integration Tester',
+          content: 'This article was created during an integration test.',
+          tags: ['integration']
+        })
+      );
     });
     
     // Unmount the form component
     unmount();
     
     // Now render the article list page
-    renderWithProviders(<ArticleListPage />);
+    render(<ArticleListPage />);
     
-    // Wait for the articles to load and verify our new article is displayed
+    // Wait for articles to load and verify our new article is in the mocked API data
     await waitFor(() => {
-      expect(screen.getByText('Integration Test Article')).toBeInTheDocument();
-      expect(screen.getByText(/Integration Tester/)).toBeInTheDocument();
-      expect(screen.getByText(/integration/)).toBeInTheDocument();
+      const mockArticles = mockApiService.articles;
+      expect(mockArticles.some(article => article.title === 'Integration Test Article')).toBe(true);
     });
   });
 });

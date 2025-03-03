@@ -3,11 +3,13 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "types": [
       "jest",
       "node",
-      "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts"
+      "@testing-library/jest-dom",
+      "@types/testing-library__jest-dom"
     ]
   },
   "include": [
