@@ -162,9 +162,18 @@ importers:
       '@vitest/ui':
         specifier: ^1.6.1
         version: 1.6.1(vitest@1.6.1)
+      '@wdio/cli':
+        specifier: ^9.10.1
+        version: 9.10.1
+      '@wdio/globals':
+        specifier: ^9.10.1
+        version: 9.10.1(@wdio/logger@9.4.4)
       '@wdio/jasmine-framework':
         specifier: ^9.10.1
         version: 9.10.1(webdriverio@9.10.1)
+      '@wdio/local-runner':
+        specifier: ^9.10.1
+        version: 9.10.1
       angular-eslint:
         specifier: ^19.1.0
         version: 19.1.0(eslint@9.21.0(jiti@1.21.7))(typescript-eslint@8.25.0(eslint@9.21.0(jiti@1.21.7))(typescript@5.5.4))(typescript@5.5.4)
@@ -216,6 +225,9 @@ importers:
       jest-environment-node:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-junit:
+        specifier: ^16.0.0
+        version: 16.0.0
       jsdom:
         specifier: ~22.1.0
         version: 22.1.0
@@ -225,6 +237,9 @@ importers:
       msw:
         specifier: ^2.7.3
         version: 2.7.3(@types/node@18.16.9)(typescript@5.5.4)
+      node-fetch:
+        specifier: ^2.6.9
+        version: 2.7.0
       nx:
         specifier: 20.4.6
         version: 20.4.6(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.15))(@swc/types@0.1.19)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.15))
@@ -270,6 +285,9 @@ importers:
       web-encoding:
         specifier: ^1.1.5
         version: 1.1.5
+      web-streams-polyfill:
+        specifier: ^3.2.1
+        version: 3.3.3
       webdriverio:
         specifier: ^9.10.1
         version: 9.10.1

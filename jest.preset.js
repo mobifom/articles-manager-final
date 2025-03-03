@@ -6,10 +6,15 @@ module.exports = {
   transform: {
     '^.+\\.(ts|js|html)$': ['ts-jest', {
       tsconfig: '<rootDir>/tsconfig.spec.json',
+      isolatedModules: true
     }]
   },
   resolver: '@nx/jest/plugins/resolver',
   moduleFileExtensions: ['ts', 'js', 'html'],
   collectCoverage: true,
-  coverageReporters: ['html']
+  coverageReporters: ['html', 'text', 'lcov', 'clover', 'json'],
+  // Add transformIgnorePatterns to ensure node_modules that need transformation are handled
+  transformIgnorePatterns: [
+    "/node_modules/(?!(@mswjs|msw|swagger-typescript-api)/)"
+  ]
 };

@@ -1,32 +1,52 @@
-// Polyfills for streams and encoding
-import { ReadableStream, TransformStream, WritableStream } from 'web-streams-polyfill/ponyfill';
+// packages/frontend/src/tests/mocks/server.ts
 import { TextEncoder, TextDecoder } from 'util';
 
-// Assign polyfills globally
-global.ReadableStream = ReadableStream;
-global.TransformStream = TransformStream;
-global.WritableStream = WritableStream;
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+// Handle polyfills more carefully to avoid type conflicts
+if (typeof global.TextEncoder === 'undefined') {
+  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextEncoder and the DOM one
+  global.TextEncoder = NodeTextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextDecoder and the DOM one
+  global.TextDecoder = NodeTextDecoder;
+}
+
+// Only add stream polyfills if they don't exist
+if (typeof global.ReadableStream === 'undefined') {
+  const { ReadableStream } = require('web-streams-polyfill/ponyfill');
+  global.ReadableStream = ReadableStream;
+}
+if (typeof global.WritableStream === 'undefined') {
+  const { WritableStream } = require('web-streams-polyfill/ponyfill');
+  // @ts-ignore - Type conflicts between different WritableStream implementations
+  global.WritableStream = WritableStream;
+}
+if (typeof global.TransformStream === 'undefined') {
+  const { TransformStream } = require('web-streams-polyfill/ponyfill');
+  global.TransformStream = TransformStream;
+}
 
 // BroadcastChannel Polyfill
 class BroadcastChannelPolyfill {
-  constructor(name) {
+  name: string;
+  listeners: Function[];
+
+  constructor(name: string) {
     this.name = name;
     this.listeners = [];
   }
 
-  postMessage(message) {
+  postMessage(message: any) {
     this.listeners.forEach(listener => listener({ data: message }));
   }
 
-  addEventListener(event, callback) {
+  addEventListener(event: string, callback: Function) {
     if (event === 'message') {
       this.listeners.push(callback);
     }
   }
 
-  removeEventListener(event, callback) {
+  removeEventListener(event: string, callback: Function) {
     if (event === 'message') {
       this.listeners = this.listeners.filter(listener => listener !== callback);
     }
@@ -37,9 +57,10 @@ class BroadcastChannelPolyfill {
   }
 }
 
+// @ts-ignore - assign to global
 global.BroadcastChannel = BroadcastChannelPolyfill;
 
-// Import MSW and handlers after polyfills
+// Now, import MSW after all polyfills are assigned
 import { setupServer } from 'msw/node';
 import { handlers } from './handlers';
 

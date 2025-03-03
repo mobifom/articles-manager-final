@@ -1,14 +1,17 @@
 // packages/backend/src/tests/api/articles.spec.ts
-import { Api } from '../../generated/api-client/ApiClient';
 import axios from 'axios';
 
+// Import directly from the JavaScript file that's compiled
+// This avoids ESM issues
+const { Api } = require('../../generated/api-client/ApiClient');
+
 describe('Articles API', () => {
-  let apiClient: Api<unknown>;
-  let createdArticleId: string;
+  let apiClient;
+  let createdArticleId;
   
   beforeAll(() => {
     // Initialize the API client with the server URL
-    apiClient = new Api<unknown>({
+    apiClient = new Api({
       baseUrl: 'http://localhost:3333',
     });
   });
@@ -89,7 +92,7 @@ describe('Articles API', () => {
       try {
         await axios.get(`http://localhost:3333/api/articles/${createdArticleId}`);
         fail('Expected article to be deleted but it was still found');
-      } catch (error: any) {
+      } catch (error) {
         if (axios.isAxiosError(error)) {
           expect(error.response?.status).toBe(404);
         } else {
@@ -106,7 +109,7 @@ describe('Articles API', () => {
     try {
       await axios.get('http://localhost:3333/api/articles/non-existent-id');
       fail('Expected 404 error for non-existent article');
-    } catch (error: any) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         expect(error.response?.status).toBe(404);
         expect(error.response?.data.message).toBe('Article not found');

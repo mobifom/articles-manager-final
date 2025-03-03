@@ -1,6 +1,6 @@
 // packages/frontend/src/tests/mocks/handlers.ts
 import { http, HttpResponse } from 'msw';
-import { Article } from '../../types/article';
+import { Article, CreateArticleDto, UpdateArticleDto } from '../../types/article';
 
 // Mock data for tests
 const mockArticles: Article[] = [
@@ -35,21 +35,40 @@ export const handlers = [
   
   // Create a new article
   http.post('/api/articles', async ({ request }) => {
-    const articleData = await request.json();
-    
-    const newArticle: Article = {
-      id: String(Date.now()),
-      title: articleData.title,
-      content: articleData.content,
-      author: articleData.author,
-      tags: articleData.tags || [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    articles.push(newArticle);
-    
-    return HttpResponse.json(newArticle, { status: 201 });
+    try {
+      // Properly type the request data
+      const data = await request.json() as unknown;
+      
+      // Type guard to check if data is an object and has the required properties
+      if (!data || typeof data !== 'object') {
+        return HttpResponse.json(
+          { message: 'Invalid article data' },
+          { status: 400 }
+        );
+      }
+      
+      // Cast to CreateArticleDto with proper type checking
+      const articleData = data as CreateArticleDto;
+      
+      const newArticle: Article = {
+        id: String(Date.now()),
+        title: articleData.title || 'Untitled',
+        content: articleData.content || '',
+        author: articleData.author || 'Anonymous',
+        tags: articleData.tags || [],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      articles.push(newArticle);
+      
+      return HttpResponse.json(newArticle, { status: 201 });
+    } catch (error) {
+      return HttpResponse.json(
+        { message: 'Error processing request' },
+        { status: 400 }
+      );
+    }
   }),
   
   // Get an article by ID
@@ -70,27 +89,49 @@ export const handlers = [
   
   // Update an article
   http.put('/api/articles/:id', async ({ params, request }) => {
-    const { id } = params;
-    const updates = await request.json();
-    
-    const articleIndex = articles.findIndex(a => a.id === id);
-    
-    if (articleIndex === -1) {
+    try {
+      const { id } = params;
+      const data = await request.json() as unknown;
+      
+      // Type guard to check if data is an object
+      if (!data || typeof data !== 'object') {
+        return HttpResponse.json(
+          { message: 'Invalid update data' },
+          { status: 400 }
+        );
+      }
+      
+      // Cast to UpdateArticleDto with proper type checking
+      const updates = data as UpdateArticleDto;
+      
+      const articleIndex = articles.findIndex(a => a.id === id);
+      
+      if (articleIndex === -1) {
+        return HttpResponse.json(
+          { message: 'Article not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Safely merge the updates
+      const updatedArticle: Article = {
+        ...articles[articleIndex],
+        title: updates.title || articles[articleIndex].title,
+        content: updates.content || articles[articleIndex].content,
+        author: updates.author || articles[articleIndex].author,
+        tags: updates.tags || articles[articleIndex].tags,
+        updatedAt: new Date()
+      };
+      
+      articles[articleIndex] = updatedArticle;
+      
+      return HttpResponse.json(updatedArticle);
+    } catch (error) {
       return HttpResponse.json(
-        { message: 'Article not found' },
-        { status: 404 }
+        { message: 'Error processing request' },
+        { status: 400 }
       );
     }
-    
-    const updatedArticle = {
-      ...articles[articleIndex],
-      ...updates,
-      updatedAt: new Date()
-    };
-    
-    articles[articleIndex] = updatedArticle;
-    
-    return HttpResponse.json(updatedArticle);
   }),
   
   // Delete an article

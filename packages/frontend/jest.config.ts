@@ -1,3 +1,4 @@
+// packages/frontend/jest.config.ts
 import type { Config } from '@jest/types';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -29,11 +30,13 @@ const config: Config.InitialOptions = {
       return acc;
     }, {} as Record<string, string[]>)
   },
+  // Updated setup files configuration
+  setupFiles: ['<rootDir>/src/jest-setup.js'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testEnvironment: 'jsdom',
   collectCoverage: true,
   coverageDirectory: '../../coverage/packages/frontend',
-  coverageReporters: ['text', 'lcov'],
+  coverageReporters: ['text', 'lcov', 'html', 'json', 'clover'],
   coverageThreshold: {
     global: {
       branches: 50,
@@ -41,7 +44,20 @@ const config: Config.InitialOptions = {
       lines: 50,
       statements: 50
     }
-  }
+  },
+  // Add reporters configuration to generate JUnit reports
+  reporters: [
+    'default',
+    ['jest-junit', {
+      outputDirectory: '../../reports/junit',
+      outputName: 'frontend.xml'
+    }]
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/src/tests/ui/' // Ignore WebdriverIO UI tests
+  ],
+  testTimeout: 10000
 };
 
 export default config;

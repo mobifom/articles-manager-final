@@ -4,15 +4,32 @@
  */
 
 // Use separate test setup for this component test
-import { ReadableStream, TransformStream, WritableStream } from 'web-streams-polyfill/ponyfill';
 import { TextEncoder, TextDecoder } from 'util';
 
-// Assign stream polyfills before importing anything else
-global.ReadableStream = ReadableStream;
-global.TransformStream = TransformStream; 
-global.WritableStream = WritableStream;
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+/// Handle polyfills more carefully with type assertions to avoid conflicts
+if (typeof global.TextEncoder === 'undefined') {
+  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextEncoder and the DOM one
+  global.TextEncoder = NodeTextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextDecoder and the DOM one
+  global.TextDecoder = NodeTextDecoder;
+}
+
+// Only add stream polyfills if they don't exist
+if (typeof global.ReadableStream === 'undefined') {
+  const { ReadableStream } = require('web-streams-polyfill/ponyfill');
+  global.ReadableStream = ReadableStream;
+}
+if (typeof global.WritableStream === 'undefined') {
+  const { WritableStream } = require('web-streams-polyfill/ponyfill');
+  // @ts-ignore - Type conflicts between different WritableStream implementations
+  global.WritableStream = WritableStream;
+}
+if (typeof global.TransformStream === 'undefined') {
+  const { TransformStream } = require('web-streams-polyfill/ponyfill');
+  global.TransformStream = TransformStream;
+}
 
 // Now import the web component to ensure it's registered
 import './article-preview';
