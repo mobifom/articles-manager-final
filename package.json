@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "lint": "nx run-many --target=lint",
-    "lint:fix": "nx run-many --target=lint --fix",
-    "debug:lint": "nx run-many --target=lint --verbose",
+    "lint": "nx run-many --target=lint --config=eslint.config.js",
+    "lint:fix": "nx run-many --target=lint --config=eslint.config.js --fix",
+    "debug:lint": "nx run-many --target=lint --config=eslint.config.js --verbose",
     "start:backend": "nx serve backend",
     "start:frontend": "nx serve frontend",
     "build:backend": "nx build backend",
@@ -15,7 +15,8 @@
     "test:integration": "nx run frontend:test:integration",
     "test:acceptance": "nx run frontend:test:acceptance",
     "test:e2e": "nx run backend-e2e:e2e",
-    "test:all": "nx run test:all"
+    "test:all": "nx run test:all",
+    "cleanup:eslint": "bash ./cleanup-eslint-config.sh"
   },
   "private": true,
   "devDependencies": {

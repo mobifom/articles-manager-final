@@ -10,8 +10,7 @@
         "lintFilePatterns": [
           "packages/frontend/src/**/*.{ts,tsx,js,jsx}"
         ],
-        "eslintConfig": ".eslintrc.json",
-
+        "config": "packages/frontend/eslint.config.js",
         "fix": false,
         "cache": false,
         "maxWarnings": 0

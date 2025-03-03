@@ -5,19 +5,19 @@
   "projectType": "application",
   "tags": [],
   "targets": {
-    "lint": {
-  "executor": "@nx/eslint:lint",
-  "outputs": ["{options.outputFile}"],
-  "options": {
-    "lintFilePatterns": [
-      "packages/backend/src/**/*.{ts,js}"
-    ],
-    "eslintConfig": ".eslintrc.json",
-    "fix": false,
-    "cache": false,
-    "maxWarnings": 0
-  }
-  },
+   "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/backend/src/**/*.{ts,js}"
+        ],
+        "config": "packages/backend/eslint.config.js",
+        "fix": false,
+        "cache": false,
+        "maxWarnings": 0
+      }
+    },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],

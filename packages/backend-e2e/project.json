@@ -4,6 +4,18 @@
   "projectType": "application",
   "implicitDependencies": ["backend"],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/backend-e2e/src/**/*.{ts,js}"
+        ],
+        "config": "packages/backend-e2e/eslint.config.js",
+        "fix": false,
+        "cache": false
+      }
+    },
     "e2e": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],

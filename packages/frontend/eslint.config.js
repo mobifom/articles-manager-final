@@ -1,6 +1,16 @@
 const baseConfig = require('../../eslint.config.js');
 
+const packageIgnores = {
+  ignores: [
+    'dist/',
+    'coverage/',
+    '**/*.spec.ts', // Ignore test files for linting if needed
+    'src/generated/'
+  ]
+};
+
 module.exports = [
+  packageIgnores,
   ...baseConfig,
   {
     files: ['**/*.tsx', '**/*.jsx'],
@@ -18,6 +28,13 @@ module.exports = [
       }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn'
+    }
+  },
+  {
+    files: ['**/*.test.tsx', '**/*.test.ts', '**/*.spec.tsx', '**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react/display-name': 'off'
     }
   }
 ];
