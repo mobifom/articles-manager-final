@@ -1,7 +1,7 @@
 {
   "extends": "nx/presets/npm.json",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "nxCloudId": "67c2e5b6fa43dc1782f677e9",
+  //"nxCloudId": "67c2e5b6fa43dc1782f677e9",
   "namedInputs": {
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"],
     "default": ["sharedGlobals"]
@@ -30,6 +30,12 @@
         "targetName": "test"
       },
       "exclude": ["packages/backend-e2e/**/*", "packages/frontend/**/*"]
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+        "options": {
+        "targetName": "lint"
+       }
     }
   ],
   "generators": {
@@ -69,7 +75,7 @@
       "inputs": ["default", "^default"]
     },
     "lint": {
-      "cache": true,
+      "cache": false,
       "inputs": [
         "default",
         "{workspaceRoot}/.eslintrc.json",

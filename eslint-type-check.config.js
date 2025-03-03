@@ -1,5 +1,11 @@
-module.exports = {
-    extends: ['./eslint.config.js'],
+// eslint-type-check.config.js
+const baseConfig = require('./eslint.config.js');
+const { FlatCompat } = require('@eslint/eslintrc');
+const compat = new FlatCompat();
+
+module.exports = [
+  ...baseConfig,
+  ...compat.config({
     rules: {
       '@typescript-eslint/strict-boolean-expressions': 'error',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',
@@ -15,4 +21,5 @@ module.exports = {
         }
       }
     ]
-  };
+  })
+];

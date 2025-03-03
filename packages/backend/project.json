@@ -6,21 +6,18 @@
   "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "packages/backend/src/**/*.{ts,js}"
-        ],
-        "eslintConfig": [
-          "eslint.config.js",
-          "packages/backend/eslint.config.js"
-        ],
-        "fix": false,
-        "cache": true,
-        "maxWarnings": 0
-      }
-    },
+  "executor": "@nx/eslint:lint",
+  "outputs": ["{options.outputFile}"],
+  "options": {
+    "lintFilePatterns": [
+      "packages/backend/src/**/*.{ts,js}"
+    ],
+    "eslintConfig": ".eslintrc.json",
+    "fix": false,
+    "cache": false,
+    "maxWarnings": 0
+  }
+  },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],

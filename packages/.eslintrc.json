@@ -1,0 +1,8 @@
+{
+    "root": true,
+    "ignorePatterns": ["**/*"],
+    "plugins": ["@nx"],
+    "extends": [
+      "./eslint.config.js"
+    ]
+  }

@@ -7,26 +7,6 @@
       "frontend": "packages/frontend"
     },
     "targets": {
-      "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "nx run backend:lint",
-          "nx run frontend:lint"
-        ],
-        "parallel": true
-      }
-    },
-    "lint:fix": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "nx run backend:lint --fix",
-          "nx run frontend:lint --fix"
-        ],
-        "parallel": true
-      }
-    },
       "test:all": {
         "executor": "nx:run-commands",
         "options": {
