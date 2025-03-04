@@ -1,3 +1,99 @@
+#!/bin/bash
+# fix-frontend-integration-tests.sh
+
+# Text colors
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Starting integration tests fix...${NC}"
+
+# Fix the Jest configuration file
+echo -e "${YELLOW}Fixing Jest configuration file...${NC}"
+cat > packages/frontend/jest.config.ts << 'EOL'
+// packages/frontend/jest.config.ts
+import type { Config } from '@jest/types';
+
+const config: Config.InitialOptions = {
+  displayName: 'frontend',
+  preset: '../../jest.preset.js',
+  transform: {
+    '^.+\\.(ts|tsx|js|jsx)$': ['ts-jest', {
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+      diagnostics: {
+        warnOnly: true
+      }
+    }]
+  },
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
+  },
+  // Set up files
+  setupFiles: ['<rootDir>/src/jest-setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  testEnvironment: 'jsdom',
+  // Coverage configuration
+  collectCoverage: true,
+  coverageDirectory: '../../coverage/packages/frontend',
+  coverageReporters: ['text', 'lcov', 'html', 'json', 'clover'],
+  coverageThreshold: {
+    global: {
+      branches: 50,
+      functions: 50,
+      lines: 50,
+      statements: 50
+    }
+  },
+  // Reporters configuration
+  reporters: [
+    'default',
+    ['jest-junit', {
+      outputDirectory: '../../reports/junit',
+      outputName: 'frontend.xml'
+    }]
+  ],
+  // Timeout configuration
+  testTimeout: 10000,
+  // Path patterns
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/src/tests/ui/' // Ignore WebdriverIO UI tests
+  ]
+};
+
+export default config;
+EOL
+
+# Update project.json
+echo -e "${YELLOW}Updating project.json...${NC}"
+node -e '
+const fs = require("fs");
+const path = require("path");
+const projectJsonPath = path.join("packages", "frontend", "project.json");
+let projectJson = JSON.parse(fs.readFileSync(projectJsonPath, "utf8"));
+
+// Update test:integration target
+projectJson.targets["test:integration"] = {
+  executor: "@nx/jest:jest",
+  options: {
+    jestConfig: "packages/frontend/jest.config.ts",
+    passWithNoTests: true,
+    testMatch: ["**/src/tests/integration/**/*.test.{ts,tsx}"]
+  }
+};
+
+fs.writeFileSync(projectJsonPath, JSON.stringify(projectJson, null, 2));
+console.log("Updated project.json");
+'
+
+# Create the integration tests directory if it doesn't exist
+echo -e "${YELLOW}Creating integration tests directory...${NC}"
+mkdir -p packages/frontend/src/tests/integration
+
+# Create a sample integration test if none exists
+echo -e "${YELLOW}Creating sample integration test...${NC}"
+cat > packages/frontend/src/tests/integration/ArticleManagement.test.tsx << 'EOL'
 // packages/frontend/src/tests/integration/ArticleManagement.test.tsx
 import React from 'react';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
@@ -32,7 +128,7 @@ const mockArticles: Article[] = [
 // Mock the API service with a more dynamic implementation
 jest.mock('../../services/api.service', () => {
   // Create a mutable copy of the articles array for the mock implementation
-  const articles = [...mockArticles];
+  let articles = [...mockArticles];
   
   return {
     apiService: {
@@ -94,7 +190,7 @@ describe('Article Management Integration', () => {
   });
 
   it('displays articles from the API correctly', async () => {
-    render(<ArticleListPage   />);
+    render(<ArticleListPage />);
 
     // Wait for the articles to load
     await waitFor(() => {
@@ -200,3 +296,70 @@ describe('Article Management Integration', () => {
     expect(apiService.deleteArticle).toHaveBeenCalledWith('test-1');
   });
 });
+EOL
+
+# Make sure the test-utils.tsx file exists
+echo -e "${YELLOW}Creating test-utils.tsx if needed...${NC}"
+mkdir -p packages/frontend/src/tests/utils
+if [ ! -f packages/frontend/src/tests/utils/test-utils.tsx ]; then
+  cat > packages/frontend/src/tests/utils/test-utils.tsx << 'EOL'
+// packages/frontend/src/tests/utils/test-utils.tsx
+import React, { ReactElement } from 'react';
+import { render, RenderOptions } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { AppProvider } from '../../context/AppContext';
+
+// Custom render function that includes providers
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  route?: string;
+  routes?: Array<{
+    path: string;
+    element: ReactElement;
+  }>;
+}
+
+// Render with all providers
+export function renderWithProviders(
+  ui: ReactElement,
+  {
+    route = '/',
+    routes = [],
+    ...renderOptions
+  }: CustomRenderOptions = {}
+) {
+  function AllProviders({ children }: { children: React.ReactNode }) {
+    return (
+      <MemoryRouter initialEntries={[route]}>
+        <AppProvider>
+          {children}
+        </AppProvider>
+      </MemoryRouter>
+    );
+  }
+  
+  // If there are routes to render
+  if (routes.length > 0) {
+    return render(
+      <MemoryRouter initialEntries={[route]}>
+        <AppProvider>
+          <Routes>
+            {routes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Routes>
+        </AppProvider>
+      </MemoryRouter>,
+      renderOptions
+    );
+  }
+
+  return render(ui, { wrapper: AllProviders, ...renderOptions });
+}
+
+// Export all from testing-library for convenience
+export * from '@testing-library/react';
+export { renderWithProviders as render };
+EOL
+fi
+
+echo -e "${GREEN}Fix complete! Now run the integration tests with: nx run frontend:test:integration${NC}"

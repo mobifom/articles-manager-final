@@ -1,11 +1,5 @@
 // packages/frontend/jest.config.ts
 import type { Config } from '@jest/types';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
-// Manually read the tsconfig.json
-const tsConfigPath = join(__dirname, 'tsconfig.json');
-const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
 const config: Config.InitialOptions = {
   displayName: 'frontend',
@@ -19,21 +13,13 @@ const config: Config.InitialOptions = {
     }]
   },
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    ...Object.entries(tsConfig.compilerOptions?.paths || {}).reduce((acc, [key, value]) => {
-      const mappedKey = key.replace('/*', '/(.*)');
-      const mappedValue = Array.isArray(value)
-        ? value.map(v => `<rootDir>/${v.replace('/*', '/$1')}`)
-        : [`<rootDir>/${(value as string).replace('/*', '/$1')}`];
-      
-      acc[mappedKey] = mappedValue;
-      return acc;
-    }, {} as Record<string, string[]>)
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
   },
-  // Updated setup files configuration
+  // Set up files
   setupFiles: ['<rootDir>/src/jest-setup.js'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testEnvironment: 'jsdom',
+  // Coverage configuration
   collectCoverage: true,
   coverageDirectory: '../../coverage/packages/frontend',
   coverageReporters: ['text', 'lcov', 'html', 'json', 'clover'],
@@ -45,7 +31,7 @@ const config: Config.InitialOptions = {
       statements: 50
     }
   },
-  // Add reporters configuration to generate JUnit reports
+  // Reporters configuration
   reporters: [
     'default',
     ['jest-junit', {
@@ -53,11 +39,13 @@ const config: Config.InitialOptions = {
       outputName: 'frontend.xml'
     }]
   ],
+  // Timeout configuration
+  testTimeout: 10000,
+  // Path patterns
   testPathIgnorePatterns: [
     '/node_modules/',
     '/src/tests/ui/' // Ignore WebdriverIO UI tests
-  ],
-  testTimeout: 10000
+  ]
 };
 
 export default config;
