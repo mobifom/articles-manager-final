@@ -69,7 +69,7 @@ const ArticlePreviewWrapper: React.FC<ArticlePreviewWrapperProps> = ({
       author={article.author}
       created-at={article.createdAt.toString()}
       tags={tagsString}
-    ></article-preview>
+     />
   );
 };
 

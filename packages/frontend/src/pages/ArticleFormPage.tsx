@@ -215,7 +215,7 @@ const ArticleFormPage: React.FC = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
-            ></textarea>
+             />
           </div>
 
           {/* Tags input */}

@@ -12,7 +12,7 @@ import { Article, CreateArticleDto, UpdateArticleDto } from '../interfaces/artic
 const router = Router();
 
 // In-memory storage for articles
-let articles: Article[] = [];
+const articles: Article[] = [];
 
 /**
  * @swagger

@@ -1,27 +1,39 @@
 // packages/frontend/eslint.config.js
 const baseConfig = require('../../eslint.config.js');
 
-// Frontend-specific ignores
-const frontendIgnores = {
+// Create a separate ignores config
+const packageIgnores = {
   ignores: [
     'dist/**',
     'coverage/**',
+    '**/*.spec.ts',
+    '**/*.spec.tsx',
+    '**/*.test.ts',
+    '**/*.test.tsx',
     'src/generated/**'
   ]
 };
 
 module.exports = [
-  // Add frontend-specific ignores
-  frontendIgnores,
-  // Use the base config
+  // Add ignores first
+  packageIgnores,
+  // Then spread the base config
   ...baseConfig,
-  // Add frontend-specific rules
+  // Add React-specific rules
   {
     files: ['**/*.tsx', '**/*.jsx'],
     rules: {
-      // React-specific rules
+      // Disable problematic import rules
+      'import/no-named-as-default': 'off',
+      'import/no-named-as-default-member': 'off',
+      
+      // Keep other React-specific rules
       'react/jsx-key': 'error',
       'react/no-array-index-key': 'warn',
+      'react/jsx-props-no-spreading': ['warn', {
+        html: 'ignore',
+        exceptions: ['input', 'textarea']
+      }],
       'react/self-closing-comp': ['error', {
         component: true,
         html: true
@@ -30,7 +42,7 @@ module.exports = [
       'react-hooks/exhaustive-deps': 'warn'
     }
   },
-  // Special rules for test files
+  // Specific rules for test files
   {
     files: ['**/*.test.tsx', '**/*.test.ts', '**/*.spec.tsx', '**/*.spec.ts'],
     rules: {

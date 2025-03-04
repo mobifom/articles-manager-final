@@ -25,7 +25,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onDelete }) => {
   };
 
   // Truncate content if it's too long
-  const truncateContent = (content: string, maxLength: number = 150): string => {
+  const truncateContent = (content: string, maxLength = 150): string => {
     if (content.length <= maxLength) return content;
     return `${content.substring(0, maxLength)}...`;
   };
