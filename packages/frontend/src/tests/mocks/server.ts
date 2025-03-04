@@ -1,14 +1,14 @@
 // packages/frontend/src/tests/mocks/server.ts
-import { TextEncoder, TextDecoder } from 'util';
+import { TextEncoder  , TextDecoder /* eslint-disable-line @typescript-eslint/no-unused-vars */ } from 'util';
 
 // Handle polyfills more carefully to avoid type conflicts
 if (typeof global.TextEncoder === 'undefined') {
-  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextEncoder and the DOM one
-  global.TextEncoder = NodeTextEncoder;
+  // @ts-expect-error - TypeScript doesn't recognize the compatibility between Node's TextEncoder and the DOM one
+  global.TextEncoder   = NodeTextEncoder;
 }
 if (typeof global.TextDecoder === 'undefined') {
-  // @ts-ignore - TypeScript doesn't recognize the compatibility between Node's TextDecoder and the DOM one
-  global.TextDecoder = NodeTextDecoder;
+  // @ts-expect-error - TypeScript doesn't recognize the compatibility between Node's TextDecoder and the DOM one
+  global.TextDecoder   = NodeTextDecoder;
 }
 
 // Only add stream polyfills if they don't exist
@@ -18,7 +18,7 @@ if (typeof global.ReadableStream === 'undefined') {
 }
 if (typeof global.WritableStream === 'undefined') {
   const { WritableStream } = require('web-streams-polyfill/ponyfill');
-  // @ts-ignore - Type conflicts between different WritableStream implementations
+  // @ts-expect-error - Type conflicts between different WritableStream implementations
   global.WritableStream = WritableStream;
 }
 if (typeof global.TransformStream === 'undefined') {
@@ -57,7 +57,7 @@ class BroadcastChannelPolyfill {
   }
 }
 
-// @ts-ignore - assign to global
+// @ts-expect-error - assign to global
 global.BroadcastChannel = BroadcastChannelPolyfill;
 
 // Now, import MSW after all polyfills are assigned

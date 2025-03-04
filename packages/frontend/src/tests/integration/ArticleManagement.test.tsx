@@ -32,7 +32,7 @@ const mockArticles: Article[] = [
 // Mock the API service with a more dynamic implementation
 jest.mock('../../services/api.service', () => {
   // Create a mutable copy of the articles array for the mock implementation
-  let articles = [...mockArticles];
+  const articles = [...mockArticles];
   
   return {
     apiService: {
@@ -94,7 +94,7 @@ describe('Article Management Integration', () => {
   });
 
   it('displays articles from the API correctly', async () => {
-    render(<ArticleListPage />);
+    render(<ArticleListPage   />);
 
     // Wait for the articles to load
     await waitFor(() => {

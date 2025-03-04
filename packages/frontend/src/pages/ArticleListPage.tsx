@@ -8,7 +8,7 @@ import '../components/web-components'; // Import to register web components
 
 const ArticleListPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const { articles, loading, error } = state;
+  const { articles, loading, error   } = state;
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch articles when component mounts
@@ -36,7 +36,7 @@ const ArticleListPage: React.FC = () => {
         await apiService.deleteArticle(id);
         dispatch({ type: 'DELETE_ARTICLE_SUCCESS', payload: id });
       } catch (error) {
-        console.error('Error deleting article:', error);
+        console.error('Error deleting article:', error  );
         alert('Failed to delete article');
       }
     },
@@ -110,7 +110,7 @@ const ArticleListPage: React.FC = () => {
   // Render error state
   const renderError = () => (
     <div className="rounded-lg bg-red-100 p-4 text-red-700">
-      <p>{error}</p>
+      <p>{error  }</p>
     </div>
   );
 
@@ -156,7 +156,7 @@ const renderArticleList = () => {
       {renderHeader()}
       {renderSearchBar()}
       
-      {loading ? renderLoading() : error ? renderError() : renderArticleList()}
+      {loading ? renderLoading() : error   ? renderError() : renderArticleList()}
     </div>
   );
 };

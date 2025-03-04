@@ -1,3 +1,4 @@
+import React from 'react';
 // packages/frontend/src/tests/acceptance/ArticleManagement.test.tsx
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import { fireEvent, waitFor, screen } from '@testing-library/react';

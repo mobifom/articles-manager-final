@@ -1,3 +1,4 @@
+import React from 'react';
 /*
  * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  This is a starter component and can be deleted.
