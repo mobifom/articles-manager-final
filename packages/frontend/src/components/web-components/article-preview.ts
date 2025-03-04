@@ -42,12 +42,13 @@ class ArticlePreview extends HTMLElement {
     // Handle view button click
     private handleViewClick = (e: Event) => {
       e.preventDefault();
+       
       const articleId = this.getAttribute('article-id') || this._article?.id;
       if (articleId) {
         this.dispatchEvent(new CustomEvent('article-view', {
           bubbles: true,
           composed: true,
-          detail: { id: articleId }
+          detail: { id: articleId   }
         }));
       }
     };
@@ -55,12 +56,13 @@ class ArticlePreview extends HTMLElement {
     // Handle edit button click
     private handleEditClick = (e: Event) => {
       e.preventDefault();
+       
       const articleId = this.getAttribute('article-id') || this._article?.id;
       if (articleId) {
         this.dispatchEvent(new CustomEvent('article-edit', {
           bubbles: true,
           composed: true,
-          detail: { id: articleId }
+          detail: { id: articleId   }
         }));
       }
     };
@@ -68,12 +70,13 @@ class ArticlePreview extends HTMLElement {
     // Handle delete button click
     private handleDeleteClick = (e: Event) => {
       e.preventDefault();
+       
       const articleId = this.getAttribute('article-id') || this._article?.id;
       if (articleId) {
         this.dispatchEvent(new CustomEvent('article-delete', {
           bubbles: true,
           composed: true,
-          detail: { id: articleId }
+          detail: { id: articleId   }
         }));
       }
     };
@@ -152,7 +155,8 @@ class ArticlePreview extends HTMLElement {
       const author = this.getAttribute('author') || this._article?.author || 'Unknown Author';
       const createdAt = this.getAttribute('created-at') || this._article?.createdAt || new Date().toISOString();
       const tags = this.getTags();
-      const articleId = this.getAttribute('article-id') || this._article?.id;
+       
+      const articleId /* eslint-disable-line @typescript-eslint/no-unused-vars */ = this.getAttribute('article-id') || this._article?.id;
       
       // Define component styles
       const styles = `

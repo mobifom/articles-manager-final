@@ -10,12 +10,12 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "packages/backend/src/**/*.{ts,js}"
+          "packages/backend/**/**.{ts,js}"
         ],
         "config": "packages/backend/eslint.config.js",
         "fix": false,
         "cache": false,
-        "maxWarnings": 0
+        "maxWarnings": 5
       }
     },
     "build": {

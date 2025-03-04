@@ -8,7 +8,7 @@ import '../components/web-components'; // Import to register web components
 
 const HomePage: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const { articles, loading, error } = state;
+  const { articles, loading, error   } = state;
 
   // Fetch articles when component mounts
   useEffect(() => {
@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
       await apiService.deleteArticle(id);
       dispatch({ type: 'DELETE_ARTICLE_SUCCESS', payload: id });
     } catch (error) {
-      console.error('Error deleting article:', error);
+      console.error('Error deleting article:', error  );
     }
   };
 
@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
           </div>
         ) : error ? (
           <div className="bg-red-100 text-red-700 p-4 rounded-lg">
-            <p>{error}</p>
+            <p>{error  }</p>
           </div>
         ) : latestArticles.length > 0 ? (
           <div className="grid md:grid-cols-3 gap-6">
