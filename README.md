@@ -226,7 +226,3 @@ View coverage reports in the `coverage/` directory after running tests.
 - Advanced searching and filtering
 - Image upload capabilities
 - Real-time collaborative editing
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
