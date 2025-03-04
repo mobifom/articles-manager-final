@@ -5,7 +5,9 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "packages/frontend/src/**/*.{ts,tsx,js,jsx}"
@@ -41,7 +43,9 @@
       "options": {
         "jestConfig": "packages/frontend/jest.config.ts",
         "passWithNoTests": true,
-        "testMatch": ["**/src/**/*.test.{ts,tsx}"]
+        "testMatch": [
+          "**/src/**/*.test.{ts,tsx}"
+        ]
       }
     },
     "test:integration": {
@@ -49,7 +53,9 @@
       "options": {
         "jestConfig": "packages/frontend/jest.config.ts",
         "passWithNoTests": true,
-        "testMatch": ["**/src/tests/integration/**/*.test.{ts,tsx}"]
+        "testMatch": [
+          "**/src/tests/integration/**/*.test.{ts,tsx}"
+        ]
       }
     },
     "test:ui": {
@@ -70,7 +76,9 @@
       "options": {
         "jestConfig": "packages/frontend/jest.config.ts",
         "passWithNoTests": true,
-        "testMatch": ["**/src/tests/acceptance/**/*.test.{ts,tsx}"]
+        "testMatch": [
+          "**/src/tests/acceptance/**/*.test.{ts,tsx}"
+        ]
       }
     }
   }
